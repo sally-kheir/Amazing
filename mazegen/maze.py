@@ -41,5 +41,5 @@ class Maze:
         for direction, (dx, dy) in DELTA.items():
             nx, ny = x + dx, y + dy
             if self.in_bounds(nx, ny) and (nx, ny) not in self.pattern_cells:
-                yield(direction,nx, ny)
+                yield direction, nx, ny
             
