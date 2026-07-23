@@ -1,14 +1,15 @@
 from __future__ import annotations
 from collections import deque
 from typing import Tuple
-from mazegen.maze import Maze, DELTA
+from mazegen.maze import Maze
 
 
-def find_path(maze: Maze, entry: Tuple[int, int], exit_: Tuple[int, int]) -> str:
+def find_path(
+        maze: Maze, entry: Tuple[int, int], exit_: Tuple[int, int]) -> str:
 
     if entry == exit_:
         return ""
-    
+
     came_from: dict = {entry: None}
     queue = deque()
     queue.append(entry)
@@ -26,7 +27,7 @@ def find_path(maze: Maze, entry: Tuple[int, int], exit_: Tuple[int, int]) -> str
                     queue.append((nx, ny))
 
     if exit_ not in came_from:
-        return "" 
+        return ""
 
     path = []
     current = exit_

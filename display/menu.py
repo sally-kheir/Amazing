@@ -19,7 +19,11 @@ def animate_path_reveal(generator: Any, theme_name: str) -> None:
     ordered_path = ascii_view.build_path_cells(generator)
     if not ordered_path:
         clear_screen()
-        print(ascii_view.render(generator, show_path=False, theme_name=theme_name))
+        print(
+            ascii_view.render(
+                generator,
+                show_path=False,
+                theme_name=theme_name))
         print("\nNo path available to display.")
         return
 
@@ -51,19 +55,26 @@ def run_menu(config: Dict[str, Any], generator: Any) -> None:
             animate_path_reveal(generator, current_theme)
         else:
             clear_screen()
-            print(ascii_view.render(generator, show_path=False, theme_name=current_theme))
+            print(
+                ascii_view.render(
+                    generator,
+                    show_path=False,
+                    theme_name=current_theme))
 
         print("\n=== A-Maze-ing ===")
         print(f"Current theme: {current_theme}")
         print("1. Re-generate a new maze")
         print("2. Show/Hide path from entry to exit")
-        print("3. Rotate maze colors (Strawberry -> Lilac -> Orange -> Lebanon)")
+        print("3. Rotate maze colors (Strawberry -> Lilac -> Rainbow -> 42)")
         print("4. Quit")
         choice = input("Choice? (1-4): ").strip()
 
         if choice == "1":
             try:
-                generator.generate(config["entry"], config["exit"], config["perfect"])
+                generator.generate(
+                    config["entry"],
+                    config["exit"],
+                    config["perfect"])
             except Exception as e:
                 print(f"Generation Error: {e}")
                 input("Press Enter to continue...")

@@ -3,6 +3,7 @@ import os
 import sys
 from typing import Dict, Any, Tuple
 
+
 def parse_config(filepath: str) -> Dict[str, Any]:
     """Lit et valide le fichier de configuration du labyrinthe.
 
@@ -24,7 +25,9 @@ def parse_config(filepath: str) -> Dict[str, Any]:
                 if not line or line.startswith('#'):
                     continue
                 if '=' not in line:
-                    print(f"Error: invalid line format: '{line}'", file=sys.stderr)
+                    print(
+                        f"Error: invalid line format: '{line}'",
+                        file=sys.stderr)
                     sys.exit(1)
                 key, val = line.split('=', 1)
                 config[key.strip().upper()] = val.strip()
@@ -33,7 +36,13 @@ def parse_config(filepath: str) -> Dict[str, Any]:
         sys.exit(1)
 
     # Validation des clés obligatoires
-    mandatory_keys = ["WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"]
+    mandatory_keys = [
+        "WIDTH",
+        "HEIGHT",
+        "ENTRY",
+        "EXIT",
+        "OUTPUT_FILE",
+        "PERFECT"]
     for m_key in mandatory_keys:
         if m_key not in config:
             print(f"Error: missing required key: {m_key}", file=sys.stderr)
@@ -46,7 +55,9 @@ def parse_config(filepath: str) -> Dict[str, Any]:
         if width <= 0 or height <= 0:
             raise ValueError
     except ValueError:
-        print("Error: WIDTH and HEIGHT must be positive integers greater than 0", file=sys.stderr)
+        print(
+            "Error: WIDTH and HEIGHT must be positive integers greater than 0",
+            file=sys.stderr)
         sys.exit(1)
 
     # Validation des coordonnées d'entrée/sortie
@@ -57,7 +68,9 @@ def parse_config(filepath: str) -> Dict[str, Any]:
                 raise ValueError
             cx, cy = int(parts[0]), int(parts[1])
             if not (0 <= cx < width and 0 <= cy < height):
-                print(f"Error: {key_name} coordinates outside maze bounds", file=sys.stderr)
+                print(
+                    f"Error: {key_name} coordinates outside maze bounds",
+                    file=sys.stderr)
                 sys.exit(1)
             return cx, cy
         except ValueError:

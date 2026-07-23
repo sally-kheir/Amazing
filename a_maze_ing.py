@@ -7,6 +7,7 @@ from display.menu import run_menu
 # Importation du package réutilisable développé par Danah
 from mazegen import MazeGenerator
 
+
 def main() -> None:
     """Point d'entrée principal de l'application."""
     if len(sys.argv) != 2:
@@ -18,7 +19,10 @@ def main() -> None:
 
     # 2. Instanciation et appel du moteur algorithmique (Danah)
     try:
-        generator = MazeGenerator(config["width"], config["height"], config["seed"])
+        generator = MazeGenerator(
+            config["width"],
+            config["height"],
+            config["seed"])
         generator.generate(config["entry"], config["exit"], config["perfect"])
     except Exception as e:
         print(f"Generation Error: {e}", file=sys.stderr)
@@ -29,6 +33,7 @@ def main() -> None:
 
     # 4. Lancement de la boucle utilisateur d'affichage
     run_menu(config, generator)
+
 
 if __name__ == "__main__":
     main()

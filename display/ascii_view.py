@@ -1,90 +1,98 @@
 # display/ascii_view.py
 from typing import Any, Set, Tuple, Dict, List, Optional, TypedDict
 
-# Codes ANSI de fond colore (48;5;...m) pour faire des blocs pleins "Pixel Art"
+
 COLORS = {
     "RESET": "\033[0m",
-    "ENTRY": "\033[48;5;201m",          # Rose/Magenta vif pour l'entree
-    "EXIT": "\033[48;5;117m",           # Bleu ciel pour la sortie
-
-    # Couleurs de murs
-    "WHITE": "\033[48;5;231m",          # Blanc pur
-    "BABY_PINK": "\033[48;5;224m",      # Rose bebe / rose tres clair
-    "LILAC": "\033[48;5;189m",          # Lilas clair
-    "BEIGE_ORANGE": "\033[48;5;215m",   # Beige orange / peche clair
-    "RED": "\033[48;5;196m",            # Rouge vif (drapeau Liban)
-
-    # Couleurs de chemin (PATH), une par theme
-    "PINK_DARK": "\033[48;5;162m",      # Rose fonce
-    "DARK_VIOLET": "\033[48;5;54m",     # Violet fonce
-    "ORANGE": "\033[48;5;208m",         # Orange vif
-    "GOLD": "\033[48;5;178m",           # Dore, pour le theme Liban
-
-    # Couleur pleine pour le motif 42 du theme Liban (cedre vert)
-    "CEDAR_GREEN": "\033[48;5;22m",
-
-    # Fond derriere les emojis du motif 42
-    "PATTERN_BG": "\033[48;5;233m",     # Fond sombre discret
+    
+    # Entry/Exit colors
+    "ENTRY": "\033[48;5;201m",   # Bright pink for entry
+    "EXIT": "\033[48;5;117m",    # Light blue for exit
+    
+    # Strawberry theme — PASTEL PINK walls (not hot pink, not peachy!)
+    "STRAWBERRY_WALL": "\033[48;5;218m",   # Pastel pink ✅ (soft, light pink)
+    "STRAWBERRY_PATH": "\033[48;5;196m",   # Bright red
+    "STRAWBERRY_PATTERN": "\033[48;5;196m", # Red pattern blocks
+    
+    # Lilac theme
+    "LILAC_WALL": "\033[48;5;189m",        # Soft lilac
+    "LILAC_PATH": "\033[48;5;54m",         # Dark purple
+    "LILAC_PATTERN": "\033[48;5;54m",      # Dark purple pattern
+    
+    # Rainbow theme — grey walls, grey path, grey 42
+    "RAINBOW_GREY": "\033[48;5;240m",      # Dark grey
+    "RAINBOW_PATH": "\033[48;5;240m",      # Grey path
+    "RAINBOW_PATTERN": "\033[48;5;240m",   # Grey 42 pattern
+    
+    # 42 Theme — LIGHTER BLUE 42, grey walls, lighter blue path
+    "FORTYTWO_WALL": "\033[48;5;240m",     # Grey walls
+    "FORTYTWO_PATH": "\033[48;5;75m",      # Lighter blue
+    "FORTYTWO_PATTERN": "\033[48;5;75m",   # Lighter blue 42 pattern
+    
+    # Gradient colors for rainbow walls
+    "RAINBOW_GRADIENT": [
+        "\033[48;5;196m",   # Red
+        "\033[48;5;202m",   # Orange-red
+        "\033[48;5;208m",   # Orange
+        "\033[48;5;214m",   # Yellow-orange
+        "\033[48;5;226m",   # Yellow
+        "\033[48;5;118m",   # Yellow-green
+        "\033[48;5;46m",    # Green
+        "\033[48;5;51m",    # Cyan
+        "\033[48;5;21m",    # Blue
+        "\033[48;5;57m",    # Indigo
+        "\033[48;5;93m",    # Violet
+        "\033[48;5;165m",   # Purple
+    ],
 }
 
 
 class ThemeStyle(TypedDict):
-    """Style complet associe a un theme."""
-    wall1: str
-    wall2: str
+    """Full style associated with a theme."""
+
+    wall: str
     path: str
-    pattern_type: str          # "emoji" ou "solid"
-    pattern_value: str         # emoji unicode si "emoji", code couleur ANSI si "solid"
+    pattern: str
+    pattern_display: str  # What to display for pattern cells
 
 
-# Chaque theme definit : couleurs de murs, couleur du chemin,
-# et comment dessiner le motif "42" (emoji ou couleur pleine).
 THEME_STYLES: Dict[str, ThemeStyle] = {
     "STRAWBERRY": {
-        "wall1": COLORS["WHITE"],
-        "wall2": COLORS["BABY_PINK"],
-        "path": COLORS["PINK_DARK"],
-        "pattern_type": "emoji",
-        "pattern_value": "\U0001F353",   # 🍓 fraise
+        "wall": COLORS["STRAWBERRY_WALL"],
+        "path": COLORS["STRAWBERRY_PATH"],
+        "pattern": COLORS["STRAWBERRY_PATTERN"],
+        "pattern_display": "\U0001F353",  # 🍓 - ALL pattern cells show this
     },
-    "LILAC_FLOWER": {
-        "wall1": COLORS["WHITE"],
-        "wall2": COLORS["LILAC"],
-        "path": COLORS["DARK_VIOLET"],
-        "pattern_type": "emoji",
-        "pattern_value": "\U0001F338",   # 🌸 fleur
+    "LILAC": {
+        "wall": COLORS["LILAC_WALL"],
+        "path": COLORS["LILAC_PATH"],
+        "pattern": COLORS["LILAC_PATTERN"],
+        "pattern_display": "\U0001F338",  # 🌸 - ALL pattern cells show this
     },
-    "ORANGE_FLOWER": {
-        "wall1": COLORS["WHITE"],
-        "wall2": COLORS["BEIGE_ORANGE"],
-        "path": COLORS["ORANGE"],
-        "pattern_type": "emoji",
-        "pattern_value": "\U0001F34A",   # 🍊 orange
+    "RAINBOW": {
+        "wall": COLORS["RAINBOW_GREY"],
+        "path": COLORS["RAINBOW_PATH"],
+        "pattern": COLORS["RAINBOW_PATTERN"],
+        "pattern_display": "  ",  # Empty space - ALL pattern cells are solid grey
     },
-    "LEBANON": {
-        "wall1": COLORS["RED"],
-        "wall2": COLORS["WHITE"],
-        "path": COLORS["GOLD"],
-        "pattern_type": "solid",
-        "pattern_value": COLORS["CEDAR_GREEN"],  # cedre vert, pas d'emoji
+    "42": {
+        "wall": COLORS["FORTYTWO_WALL"],
+        "path": COLORS["FORTYTWO_PATH"],
+        "pattern": COLORS["FORTYTWO_PATTERN"],
+        "pattern_display": "  ",  # Empty space - ALL pattern cells are solid blue
     },
 }
 
-# Ordre de rotation utilise par l'option "Rotate maze colors" du menu
-THEME_CYCLE: List[str] = ["STRAWBERRY", "LILAC_FLOWER", "ORANGE_FLOWER", "LEBANON"]
-
+# Theme cycle order
+THEME_CYCLE: List[str] = ["STRAWBERRY", "LILAC", "RAINBOW", "42"]
 DEFAULT_THEME = "STRAWBERRY"
 
 
 def build_path_cells(maze_gen: Any) -> List[Tuple[int, int]]:
-    """Reconstruit la liste ORDONNEE des cellules du chemin (entree -> sortie).
-
-    L'ordre est important pour pouvoir reveler le chemin case par case.
-    """
+    """Build ordered list of path cells from entry to exit."""
     ordered_cells: List[Tuple[int, int]] = []
     if not maze_gen.solution:
         return ordered_cells
-
     cx, cy = maze_gen.entry
     ordered_cells.append((cx, cy))
     directions = {"N": (0, -1), "S": (0, 1), "E": (1, 0), "W": (-1, 0)}
@@ -97,12 +105,13 @@ def build_path_cells(maze_gen: Any) -> List[Tuple[int, int]]:
     return ordered_cells
 
 
-def _pattern_cell_render(pattern_type: str, pattern_value: str) -> str:
-    """Retourne le texte a afficher pour une cellule du motif '42'."""
-    if pattern_type == "emoji":
-        return COLORS["PATTERN_BG"] + pattern_value
-    # "solid" -> pattern_value est directement un code couleur ANSI
-    return pattern_value + "  "
+def _get_gradient_color(x: int, y: int, width: int, height: int) -> str:
+    """Return a gradient rainbow color based on position."""
+    gradient = COLORS["RAINBOW_GRADIENT"]
+    total = width + height
+    index = int(((x + y) / total) * len(gradient))
+    index = min(index, len(gradient) - 1)
+    return gradient[index]
 
 
 def render(
@@ -111,89 +120,103 @@ def render(
     theme_name: str = DEFAULT_THEME,
     path_reveal_count: Optional[int] = None,
 ) -> str:
-    """Genere une representation graphique en blocs pleins du labyrinthe.
-
-    Args:
-        maze_gen: L'instance du MazeGenerator.
-        show_path: Indique s'il faut afficher le chemin le plus court.
-        theme_name: Le nom du theme actif (voir THEME_STYLES). Determine
-            les couleurs de murs, la couleur du chemin, et comment le
-            motif "42" est dessine (emoji ou couleur pleine).
-        path_reveal_count: si fourni, seules les N premieres cellules du
-            chemin (dans l'ordre entree -> sortie) sont colorees. Permet
-            une revelation progressive, case par case. None = chemin
-            entier affiche d'un coup.
-    """
+    """Generate a pixel-art block representation of the maze."""
     bg_empty = COLORS["RESET"] + "  "
-
     style = THEME_STYLES.get(theme_name, THEME_STYLES[DEFAULT_THEME])
-    color1 = style["wall1"]
-    color2 = style["wall2"]
-    path_color = style["path"]
-    pattern_type = style["pattern_type"]
-    pattern_value = style["pattern_value"]
-    pattern_cell_text = _pattern_cell_render(pattern_type, pattern_value)
 
-    # 1. Reconstruction du chemin le plus court si active
+    # Build path cells set if needed
     path_cells: Set[Tuple[int, int]] = set()
     if show_path and maze_gen.solution:
         ordered_path = build_path_cells(maze_gen)
-        limit = len(ordered_path) if path_reveal_count is None else path_reveal_count
+        limit = (
+            len(ordered_path)
+            if path_reveal_count is None
+            else path_reveal_count
+        )
         path_cells = set(ordered_path[:limit])
 
     render_width = maze_gen.width * 2 + 1
     render_height = maze_gen.height * 2 + 1
+    display_grid = [
+        ["WALL" for _ in range(render_width)]
+        for _ in range(render_height)
+    ]
 
-    display_grid = [["WALL" for _ in range(render_width)] for _ in range(render_height)]
+    # Get pattern cells
+    has_pattern = hasattr(maze_gen, '_maze') and hasattr(maze_gen._maze, 'pattern_cells')
+    pattern_cells = set()
+    if has_pattern:
+        pattern_cells = maze_gen._maze.pattern_cells
 
-    # 2. Sculpture des passages et des espaces vides
     for y in range(maze_gen.height):
         for x in range(maze_gen.width):
             rx = x * 2 + 1
             ry = y * 2 + 1
-
             cell_mask = maze_gen.grid[y][x]
             pos = (x, y)
+            is_pattern = pos in pattern_cells
 
+            # Determine cell content
             if pos == maze_gen.entry:
                 cell_color = COLORS["ENTRY"] + "  "
             elif pos == maze_gen.exit_:
                 cell_color = COLORS["EXIT"] + "  "
             elif show_path and pos in path_cells:
-                cell_color = path_color + "  "
-            elif cell_mask == 15:  # Cellule fermee du Motif 42
-                cell_color = pattern_cell_text
+                cell_color = style["path"] + "  "
+            elif is_pattern:
+                # ALL pattern cells use the SAME display!
+                cell_color = style["pattern"] + style["pattern_display"]
             else:
                 cell_color = bg_empty
 
             display_grid[ry][rx] = cell_color
 
-            # Ouvrir le mur Est
+            # Open east passage
             if not (cell_mask & 2) and (x + 1 < maze_gen.width):
-                if cell_mask == 15 and maze_gen.grid[y][x + 1] == 15:
-                    display_grid[ry][rx + 1] = pattern_cell_text
-                elif show_path and pos in path_cells and (x + 1, y) in path_cells:
-                    display_grid[ry][rx + 1] = path_color + "  "
+                east_pos = (x + 1, y)
+                is_east_pattern = east_pos in pattern_cells
+                
+                if is_pattern and is_east_pattern:
+                    # Both pattern cells - use pattern display
+                    display_grid[ry][rx + 1] = style["pattern"] + style["pattern_display"]
+                elif (
+                    show_path
+                    and pos in path_cells
+                    and east_pos in path_cells
+                ):
+                    display_grid[ry][rx + 1] = style["path"] + "  "
                 else:
                     display_grid[ry][rx + 1] = bg_empty
 
-            # Ouvrir le mur Sud
+            # Open south passage
             if not (cell_mask & 4) and (y + 1 < maze_gen.height):
-                if cell_mask == 15 and maze_gen.grid[y + 1][x] == 15:
-                    display_grid[ry + 1][rx] = pattern_cell_text
-                elif show_path and pos in path_cells and (x, y + 1) in path_cells:
-                    display_grid[ry + 1][rx] = path_color + "  "
+                south_pos = (x, y + 1)
+                is_south_pattern = south_pos in pattern_cells
+                
+                if is_pattern and is_south_pattern:
+                    # Both pattern cells - use pattern display
+                    display_grid[ry + 1][rx] = style["pattern"] + style["pattern_display"]
+                elif (
+                    show_path
+                    and pos in path_cells
+                    and south_pos in path_cells
+                ):
+                    display_grid[ry + 1][rx] = style["path"] + "  "
                 else:
                     display_grid[ry + 1][rx] = bg_empty
 
-    # 3. Application des couleurs sur les blocs de murs restants ("WALL")
+    # Paint wall blocks
     for y in range(render_height):
         for x in range(render_width):
             if display_grid[y][x] == "WALL":
-                chosen_wall_color = color1 if (x + y) % 2 == 0 else color2
-                display_grid[y][x] = chosen_wall_color + "  "
+                if theme_name == "RAINBOW":
+                    wall_color = _get_gradient_color(
+                        x, y, render_width, render_height
+                    )
+                else:
+                    wall_color = style["wall"]
+                display_grid[y][x] = wall_color + "  "
 
-    # 4. Assemblage final des lignes
     final_lines = []
     for row in display_grid:
         final_lines.append("".join(row) + COLORS["RESET"])
