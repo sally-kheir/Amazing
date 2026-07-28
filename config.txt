@@ -1,7 +1,8 @@
-WIDTH=15
-HEIGHT=15
+# Default Configuration File
+WIDTH=10
+HEIGHT=10
 ENTRY=0,0
-EXIT=5,5
+EXIT=9,9
 PERFECT=true
 OUTPUT_FILE=output.hex
 SEED=42
