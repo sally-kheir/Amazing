@@ -5,44 +5,71 @@ from typing import Any, Set, Tuple, Dict, List, Optional, TypedDict
 COLORS = {
     "RESET": "\033[0m",
     
-    # Entry/Exit colors
-    "ENTRY": "\033[48;5;201m",   # Bright pink for entry
-    "EXIT": "\033[48;5;117m",    # Light blue for exit
+    # Entry/Exit default colors (#CCE092)
+    "ENTRY": "\033[48;2;204;224;146m",   # #CCE092
+    "EXIT": "\033[48;2;204;224;146m",    # #CCE092
     
-    # Strawberry theme — PASTEL PINK walls (not hot pink, not peachy!)
-    "STRAWBERRY_WALL": "\033[48;5;218m",   # Pastel pink ✅ (soft, light pink)
-    "STRAWBERRY_PATH": "\033[48;5;196m",   # Bright red
-    "STRAWBERRY_PATTERN": "\033[48;5;196m", # Red pattern blocks
+    # Palette Hex (Theme Custom)
+    "PALETTE_WALL": "\033[48;2;186;176;149m",     # #BAB095
+    "PALETTE_PATH": "\033[48;2;204;224;146m",     # #CCE092
+    "PALETTE_BG": "\033[48;2;237;232;208m",       # #EDE8D0
+    "PALETTE_PATTERN": "\033[48;2;214;211;154m",  # #D6D39A
+
+    # Palette Hex (Theme Magenta)
+    "MAGENTA_WALL": "\033[48;2;103;0;103m",       # #670067
+    "MAGENTA_BG": "\033[48;2;255;173;255m",       # #FFADFF
+    "MAGENTA_PATH": "\033[48;2;167;69;214m",     # #A745D6
+    "MAGENTA_PATTERN": "\033[48;2;193;28;132m",   # #C11C84
+
+    # Palette Hex (Theme Pastel)
+    "PASTEL_WALL": "\033[48;2;216;164;181m",      # #D8A4B5
+    "PASTEL_BG": "\033[48;2;242;231;189m",        # #F2E7BD
+    "PASTEL_PATH": "\033[48;2;189;217;242m",      # #BDD9F2
+    "PASTEL_PATTERN": "\033[48;2;242;189;205m",   # #F2BDCD
+    "PASTEL_START_END": "\033[48;2;225;242;189m", # #E1F2BD
+
+    # Palette Hex (Theme Neon Pastel)
+    "NEON_WALL": "\033[48;2;184;92;207m",         # #B85CCF (Murs)
+    "NEON_BG": "\033[48;2;255;179;243m",          # #FFB3F3 (Fond)
+    "NEON_PATH": "\033[48;2;115;255;223m",        # #73FFDF (Chemin)
+    "NEON_PATTERN": "\033[48;2;223;115;255m",     # #DF73FF (Motif 42)
+    "NEON_START": "\033[48;2;255;115;215m",       # #FF73D7 (Début)
+    "NEON_EXIT": "\033[48;2;175;255;237m",        # #AFFFED (Fin)
+
+    # Strawberry theme
+    "STRAWBERRY_WALL": "\033[48;5;218m",   
+    "STRAWBERRY_PATH": "\033[48;5;196m",   
+    "STRAWBERRY_PATTERN": "\033[48;5;196m", 
     
     # Lilac theme
-    "LILAC_WALL": "\033[48;5;189m",        # Soft lilac
-    "LILAC_PATH": "\033[48;5;54m",         # Dark purple
-    "LILAC_PATTERN": "\033[48;5;54m",      # Dark purple pattern
+    "LILAC_WALL": "\033[48;5;189m",        
+    "LILAC_PATH": "\033[48;5;54m",         
+    "LILAC_PATTERN": "\033[48;5;54m",      
     
-    # Rainbow theme — grey walls, grey path, grey 42
-    "RAINBOW_GREY": "\033[48;5;240m",      # Dark grey
-    "RAINBOW_PATH": "\033[48;5;240m",      # Grey path
-    "RAINBOW_PATTERN": "\033[48;5;240m",   # Grey 42 pattern
+    # Rainbow theme
+    "RAINBOW_GREY": "\033[48;5;240m",      
+    "RAINBOW_PATH": "\033[48;5;240m",      
+    "RAINBOW_PATTERN": "\033[48;5;240m",   
     
-    # 42 Theme — LIGHTER BLUE 42, grey walls, lighter blue path
-    "FORTYTWO_WALL": "\033[48;5;240m",     # Grey walls
-    "FORTYTWO_PATH": "\033[48;5;75m",      # Lighter blue
-    "FORTYTWO_PATTERN": "\033[48;5;75m",   # Lighter blue 42 pattern
+    # 42 Theme
+    "FORTYTWO_WALL": "\033[48;5;240m",     
+    "FORTYTWO_PATH": "\033[48;5;75m",      
+    "FORTYTWO_PATTERN": "\033[48;5;75m",   
     
     # Gradient colors for rainbow walls
     "RAINBOW_GRADIENT": [
-        "\033[48;5;196m",   # Red
-        "\033[48;5;202m",   # Orange-red
-        "\033[48;5;208m",   # Orange
-        "\033[48;5;214m",   # Yellow-orange
-        "\033[48;5;226m",   # Yellow
-        "\033[48;5;118m",   # Yellow-green
-        "\033[48;5;46m",    # Green
-        "\033[48;5;51m",    # Cyan
-        "\033[48;5;21m",    # Blue
-        "\033[48;5;57m",    # Indigo
-        "\033[48;5;93m",    # Violet
-        "\033[48;5;165m",   # Purple
+        "\033[48;5;196m",
+        "\033[48;5;202m",
+        "\033[48;5;208m",
+        "\033[48;5;214m",
+        "\033[48;5;226m",
+        "\033[48;5;118m",
+        "\033[48;5;46m",
+        "\033[48;5;51m",
+        "\033[48;5;21m",
+        "\033[48;5;57m",
+        "\033[48;5;93m",
+        "\033[48;5;165m",
     ],
 }
 
@@ -53,45 +80,50 @@ class ThemeStyle(TypedDict):
     wall: str
     path: str
     pattern: str
-    pattern_display: str  # What to display for pattern cells
+    pattern_display: str
 
 
 THEME_STYLES: Dict[str, ThemeStyle] = {
-    "STRAWBERRY": {
-        "wall": COLORS["STRAWBERRY_WALL"],
-        "path": COLORS["STRAWBERRY_PATH"],
-        "pattern": COLORS["STRAWBERRY_PATTERN"],
-        "pattern_display": "\U0001F353",  # 🍓 - ALL pattern cells show this
+    "CUSTOM": {
+        "wall": COLORS["PALETTE_WALL"],
+        "path": COLORS["PALETTE_PATH"],
+        "pattern": COLORS["PALETTE_PATTERN"],
+        "pattern_display": "  ",
     },
-    "LILAC": {
-        "wall": COLORS["LILAC_WALL"],
-        "path": COLORS["LILAC_PATH"],
-        "pattern": COLORS["LILAC_PATTERN"],
-        "pattern_display": "\U0001F338",  # 🌸 - ALL pattern cells show this
+    "MAGENTA": {
+        "wall": COLORS["MAGENTA_WALL"],
+        "path": COLORS["MAGENTA_PATH"],
+        "pattern": COLORS["MAGENTA_PATTERN"],
+        "pattern_display": "  ",
     },
-    "RAINBOW": {
-        "wall": COLORS["RAINBOW_GREY"],
-        "path": COLORS["RAINBOW_PATH"],
-        "pattern": COLORS["RAINBOW_PATTERN"],
-        "pattern_display": "  ",  # Empty space - ALL pattern cells are solid grey
+    "PASTEL": {
+        "wall": COLORS["PASTEL_WALL"],
+        "path": COLORS["PASTEL_PATH"],
+        "pattern": COLORS["PASTEL_PATTERN"],
+        "pattern_display": "  ",
     },
-    "42": {
-        "wall": COLORS["FORTYTWO_WALL"],
-        "path": COLORS["FORTYTWO_PATH"],
-        "pattern": COLORS["FORTYTWO_PATTERN"],
-        "pattern_display": "  ",  # Empty space - ALL pattern cells are solid blue
+    "NEON": {
+        "wall": COLORS["NEON_WALL"],
+        "path": COLORS["NEON_PATH"],
+        "pattern": COLORS["NEON_PATTERN"],
+        "pattern_display": "  ",
     },
+    
 }
 
-# Theme cycle order
-THEME_CYCLE: List[str] = ["STRAWBERRY", "LILAC", "RAINBOW", "42"]
-DEFAULT_THEME = "STRAWBERRY"
+THEME_CYCLE: List[str] = [
+    "CUSTOM",
+    "MAGENTA",
+    "PASTEL",
+    "NEON",
+]
+DEFAULT_THEME = "CUSTOM"
 
 
 def build_path_cells(maze_gen: Any) -> List[Tuple[int, int]]:
     """Build ordered list of path cells from entry to exit."""
     ordered_cells: List[Tuple[int, int]] = []
-    if not maze_gen.solution:
+    if not hasattr(maze_gen, 'solution') or not maze_gen.solution:
         return ordered_cells
     cx, cy = maze_gen.entry
     ordered_cells.append((cx, cy))
@@ -121,12 +153,31 @@ def render(
     path_reveal_count: Optional[int] = None,
 ) -> str:
     """Generate a pixel-art block representation of the maze."""
-    bg_empty = COLORS["RESET"] + "  "
     style = THEME_STYLES.get(theme_name, THEME_STYLES[DEFAULT_THEME])
 
-    # Build path cells set if needed
+    if theme_name == "CUSTOM":
+        bg_empty = COLORS["PALETTE_BG"] + "  "
+        entry_color = COLORS["ENTRY"] + "  "
+        exit_color = COLORS["EXIT"] + "  "
+    elif theme_name == "MAGENTA":
+        bg_empty = COLORS["MAGENTA_BG"] + "  "
+        entry_color = COLORS["ENTRY"] + "  "
+        exit_color = COLORS["EXIT"] + "  "
+    elif theme_name == "PASTEL":
+        bg_empty = COLORS["PASTEL_BG"] + "  "
+        entry_color = COLORS["PASTEL_START_END"] + "  "
+        exit_color = COLORS["PASTEL_START_END"] + "  "
+    elif theme_name == "NEON":
+        bg_empty = COLORS["NEON_BG"] + "  "
+        entry_color = COLORS["NEON_START"] + "  "
+        exit_color = COLORS["NEON_EXIT"] + "  "
+    else:
+        bg_empty = COLORS["RESET"] + "  "
+        entry_color = COLORS["ENTRY"] + "  "
+        exit_color = COLORS["EXIT"] + "  "
+
     path_cells: Set[Tuple[int, int]] = set()
-    if show_path and maze_gen.solution:
+    if show_path and hasattr(maze_gen, 'solution') and maze_gen.solution:
         ordered_path = build_path_cells(maze_gen)
         limit = (
             len(ordered_path)
@@ -142,11 +193,11 @@ def render(
         for _ in range(render_height)
     ]
 
-    # Get pattern cells
-    has_pattern = hasattr(maze_gen, '_maze') and hasattr(maze_gen._maze, 'pattern_cells')
-    pattern_cells = set()
-    if has_pattern:
+    pattern_cells: Set[Tuple[int, int]] = set()
+    if hasattr(maze_gen, '_maze') and hasattr(maze_gen._maze, 'pattern_cells'):
         pattern_cells = maze_gen._maze.pattern_cells
+    elif hasattr(maze_gen, 'pattern_cells'):
+        pattern_cells = maze_gen.pattern_cells
 
     for y in range(maze_gen.height):
         for x in range(maze_gen.width):
@@ -156,28 +207,24 @@ def render(
             pos = (x, y)
             is_pattern = pos in pattern_cells
 
-            # Determine cell content
             if pos == maze_gen.entry:
-                cell_color = COLORS["ENTRY"] + "  "
+                cell_color = entry_color
             elif pos == maze_gen.exit_:
-                cell_color = COLORS["EXIT"] + "  "
+                cell_color = exit_color
             elif show_path and pos in path_cells:
                 cell_color = style["path"] + "  "
             elif is_pattern:
-                # ALL pattern cells use the SAME display!
                 cell_color = style["pattern"] + style["pattern_display"]
             else:
                 cell_color = bg_empty
 
             display_grid[ry][rx] = cell_color
 
-            # Open east passage
             if not (cell_mask & 2) and (x + 1 < maze_gen.width):
                 east_pos = (x + 1, y)
                 is_east_pattern = east_pos in pattern_cells
                 
                 if is_pattern and is_east_pattern:
-                    # Both pattern cells - use pattern display
                     display_grid[ry][rx + 1] = style["pattern"] + style["pattern_display"]
                 elif (
                     show_path
@@ -188,13 +235,11 @@ def render(
                 else:
                     display_grid[ry][rx + 1] = bg_empty
 
-            # Open south passage
             if not (cell_mask & 4) and (y + 1 < maze_gen.height):
                 south_pos = (x, y + 1)
                 is_south_pattern = south_pos in pattern_cells
                 
                 if is_pattern and is_south_pattern:
-                    # Both pattern cells - use pattern display
                     display_grid[ry + 1][rx] = style["pattern"] + style["pattern_display"]
                 elif (
                     show_path
@@ -205,7 +250,6 @@ def render(
                 else:
                     display_grid[ry + 1][rx] = bg_empty
 
-    # Paint wall blocks
     for y in range(render_height):
         for x in range(render_width):
             if display_grid[y][x] == "WALL":

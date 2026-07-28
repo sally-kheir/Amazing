@@ -38,13 +38,49 @@ def animate_path_reveal(generator: Any, theme_name: str) -> None:
         time.sleep(PATH_ANIMATION_DELAY)
 
 
-def run_menu(config: Dict[str, Any], generator: Any) -> None:
-    """Lance la boucle interactive d'affichage du labyrinthe.
+def get_theme_preview(theme_name: str) -> str:
+    """Renvoie un petit aperçu coloré (carré de couleur) pour chaque thème."""
+    style = ascii_view.THEME_STYLES.get(theme_name)
+    reset = ascii_view.COLORS["RESET"]
 
-    Args:
-        config: dictionnaire de configuration deja valide.
-        generator: instance de MazeGenerator deja generee.
-    """
+    if not style:
+        return ""
+
+    if theme_name == "RAINBOW":
+        wall_color = ascii_view.COLORS["RAINBOW_GRADIENT"][0]
+    else:
+        wall_color = style["wall"]
+
+    return f"{wall_color}  {style['pattern']}  {reset}"
+
+
+def select_theme_sub_menu() -> int:
+    """Affiche un sous-menu avec des lettres (a, b, c...) et un aperçu des couleurs."""
+    print("\n🎨 --- Select Color Theme ---")
+    
+    letters = [chr(ord('a') + i) for i in range(len(ascii_view.THEME_CYCLE))]
+    theme_mapping = {}
+
+    for idx, theme in enumerate(ascii_view.THEME_CYCLE):
+        letter = letters[idx]
+        theme_mapping[letter] = idx
+        
+        preview = get_theme_preview(theme)
+        print(f"  {letter}. {preview} {theme}")
+
+    print("----------------------------")
+    sub_choice = input(f"Choose a theme ({letters[0]}-{letters[-1]}): ").strip().lower()
+
+    if sub_choice in theme_mapping:
+        return theme_mapping[sub_choice]
+    else:
+        print("❌ Invalid choice, keeping current theme.")
+        time.sleep(1)
+        return -1
+
+
+def run_menu(config: Dict[str, Any], generator: Any) -> None:
+    """Lance la boucle interactive d'affichage du labyrinthe."""
     show_path = False
     theme_index = 0
 
@@ -61,13 +97,14 @@ def run_menu(config: Dict[str, Any], generator: Any) -> None:
                     show_path=False,
                     theme_name=current_theme))
 
-        print("\n=== A-Maze-ing ===")
-        print(f"Current theme: {current_theme}")
-        print("1. Re-generate a new maze")
-        print("2. Show/Hide path from entry to exit")
-        print("3. Rotate maze colors (Strawberry -> Lilac -> Rainbow -> 42)")
-        print("4. Quit")
-        choice = input("Choice? (1-4): ").strip()
+        print("\n🧩 === A-Maze-ing ===")
+        current_preview = get_theme_preview(current_theme)
+        print(f"Current theme: {current_preview} {current_theme}")
+        print("1. 🔄 Re-generate a new maze")
+        print("2. 🗺️  Show/Hide path from entry to exit")
+        print("3. 🎨 Change maze colors")
+        print("4. 🚪 Quit")
+        choice = input("\nChoice? (1-4): ").strip()
 
         if choice == "1":
             try:
@@ -81,10 +118,12 @@ def run_menu(config: Dict[str, Any], generator: Any) -> None:
         elif choice == "2":
             show_path = not show_path
         elif choice == "3":
-            theme_index = (theme_index + 1) % len(ascii_view.THEME_CYCLE)
+            new_index = select_theme_sub_menu()
+            if new_index != -1:
+                theme_index = new_index
         elif choice == "4":
-            print("Goodbye!")
+            print("👋 Goodbye!")
             break
         else:
-            print("Invalid choice.")
+            print("❌ Invalid choice.")
             input("Press Enter to continue...")
