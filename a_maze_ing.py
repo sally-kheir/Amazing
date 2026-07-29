@@ -5,15 +5,13 @@ from utils.config_parser import parse_config
 from utils.output_writer import write_output
 from display.menu import run_menu
 
-# Importation du package réutilisable développé par Danah
 from mazegen import MazeGenerator
 
-# Configuration par défaut si le fichier est supprimé
 DEFAULT_CONFIG_CONTENT = """# Default Configuration File
 WIDTH=10
 HEIGHT=10
 ENTRY=0,0
-EXIT=9,9
+EXIT=9,0
 PERFECT=true
 OUTPUT_FILE=output.hex
 SEED=42

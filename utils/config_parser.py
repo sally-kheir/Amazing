@@ -1,7 +1,33 @@
 # utils/config_parser.py
 import os
 import sys
-from typing import Dict, Any, Tuple
+from typing import Any, Dict, Tuple
+
+
+def _parse_coords(
+    coord_str: str, key_name: str, width: int, height: int
+) -> Tuple[int, int]:
+    """Parse et valide des coordonnées au format 'x,y'."""
+    try:
+        parts = coord_str.split(",")
+        if len(parts) != 2:
+            raise ValueError
+        cx, cy = int(parts[0]), int(parts[1])
+    except ValueError:
+        print(
+            f"Error: {key_name} must be in format 'x,y' (integers)",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    if not (0 <= cx < width and 0 <= cy < height):
+        print(
+            f"Error: {key_name} coordinates outside maze bounds",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    return cx, cy
 
 
 def parse_config(filepath: str) -> Dict[str, Any]:
@@ -19,17 +45,18 @@ def parse_config(filepath: str) -> Dict[str, Any]:
 
     config: Dict[str, str] = {}
     try:
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             for line in f:
                 line = line.strip()
-                if not line or line.startswith('#'):
+                if not line or line.startswith("#"):
                     continue
-                if '=' not in line:
+                if "=" not in line:
                     print(
                         f"Error: invalid line format: '{line}'",
-                        file=sys.stderr)
+                        file=sys.stderr,
+                    )
                     sys.exit(1)
-                key, val = line.split('=', 1)
+                key, val = line.split("=", 1)
                 config[key.strip().upper()] = val.strip()
     except IOError:
         print("Error: cannot read config file", file=sys.stderr)
@@ -42,7 +69,8 @@ def parse_config(filepath: str) -> Dict[str, Any]:
         "ENTRY",
         "EXIT",
         "OUTPUT_FILE",
-        "PERFECT"]
+        "PERFECT",
+    ]
     for m_key in mandatory_keys:
         if m_key not in config:
             print(f"Error: missing required key: {m_key}", file=sys.stderr)
@@ -57,28 +85,13 @@ def parse_config(filepath: str) -> Dict[str, Any]:
     except ValueError:
         print(
             "Error: WIDTH and HEIGHT must be positive integers greater than 0",
-            file=sys.stderr)
+            file=sys.stderr,
+        )
         sys.exit(1)
 
-    # Validation des coordonnées d'entrée/sortie
-    def parse_coords(coord_str: str, key_name: str) -> Tuple[int, int]:
-        try:
-            parts = coord_str.split(',')
-            if len(parts) != 2:
-                raise ValueError
-            cx, cy = int(parts[0]), int(parts[1])
-            if not (0 <= cx < width and 0 <= cy < height):
-                print(
-                    f"Error: {key_name} coordinates outside maze bounds",
-                    file=sys.stderr)
-                sys.exit(1)
-            return cx, cy
-        except ValueError:
-            print(f"Error: {key_name} must be in format x,y", file=sys.stderr)
-            sys.exit(1)
-
-    entry = parse_coords(config["ENTRY"], "ENTRY")
-    exit_ = parse_coords(config["EXIT"], "EXIT")
+    # Validation des coordonnées d'entrée et de sortie
+    entry = _parse_coords(config["ENTRY"], "ENTRY", width, height)
+    exit_ = _parse_coords(config["EXIT"], "EXIT", width, height)
 
     if entry == exit_:
         print("Error: ENTRY and EXIT must be different", file=sys.stderr)
@@ -109,5 +122,5 @@ def parse_config(filepath: str) -> Dict[str, Any]:
         "exit": exit_,
         "output_file": config["OUTPUT_FILE"],
         "perfect": perfect,
-        "seed": seed
+        "seed": seed,
     }
