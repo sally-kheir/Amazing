@@ -1,126 +1,101 @@
 # utils/config_parser.py
 import os
-import sys
-from typing import Any, Dict, Tuple
+from typing import Dict, Any, Tuple
 
 
-def _parse_coords(
-    coord_str: str, key_name: str, width: int, height: int
-) -> Tuple[int, int]:
-    """Parse et valide des coordonnées au format 'x,y'."""
+def _parse_coords(val: str, key_name: str) -> Tuple[int, int]:
+    """Extrait et valide une paire de coordonnées (x, y)."""
+    parts = val.split(",")
+    if len(parts) != 2:
+        raise ValueError(f"{key_name} doit être au format X,Y (ex: 0,0)")
     try:
-        parts = coord_str.split(",")
-        if len(parts) != 2:
-            raise ValueError
-        cx, cy = int(parts[0]), int(parts[1])
+        x, y = int(parts[0].strip()), int(parts[1].strip())
+        if x < 0 or y < 0:
+            raise ValueError(f"{key_name} ne peut pas contenir de valeurs négatives")
+        return x, y
     except ValueError:
-        print(
-            f"Error: {key_name} must be in format 'x,y' (integers)",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    if not (0 <= cx < width and 0 <= cy < height):
-        print(
-            f"Error: {key_name} coordinates outside maze bounds",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    return cx, cy
+        raise ValueError(f"{key_name} doit contenir des entiers valides")
 
 
 def parse_config(filepath: str) -> Dict[str, Any]:
-    """Lit et valide le fichier de configuration du labyrinthe.
-
-    Args:
-        filepath: Le chemin vers le fichier de configuration.
-
-    Returns:
-        Un dictionnaire contenant les paramètres validés.
-    """
+    """Parse le fichier de configuration en gérant les doublons et commentaires."""
     if not os.path.exists(filepath):
-        print(f"Error: config file '{filepath}' not found", file=sys.stderr)
-        sys.exit(1)
+        raise FileNotFoundError(f"Fichier de configuration introuvable: {filepath}")
 
-    config: Dict[str, str] = {}
+    raw_config: Dict[str, str] = {}
+
+    with open(filepath, "r", encoding="utf-8") as f:
+        for line_num, line in enumerate(f, 1):
+            # 1. Retirer les espaces aux extrémités
+            line = line.strip()
+
+            # 2. Ignorer les lignes vides ou qui commencent par un commentaire '#'
+            if not line or line.startswith("#"):
+                continue
+
+            # 3. Retirer les commentaires inline (en fin de ligne après '#')
+            if "#" in line:
+                line = line.split("#", 1)[0].strip()
+
+            # S'il ne reste rien après avoir retiré le commentaire inline
+            if not line:
+                continue
+
+            # 4. Vérifier la structure CLE=VALEUR
+            if "=" not in line:
+                raise ValueError(f"Ligne {line_num} invalide (attendu CLE=VALEUR): '{line}'")
+
+            key, value = line.split("=", 1)
+            key = key.strip().upper()
+            value = value.strip()
+
+            # 5. DÉTECTION DES DOUBLONS : Refuser si la clé existe déjà
+            if key in raw_config:
+                raise ValueError(f"Clé dupliquée détectée à la ligne {line_num}: '{key}'")
+
+            raw_config[key] = value
+
+    # 6. Vérification des clés obligatoires
+    required_keys = {"WIDTH", "HEIGHT", "ENTRY", "EXIT", "PERFECT", "OUTPUT_FILE"}
+    missing_keys = required_keys - set(raw_config.keys())
+    if missing_keys:
+        raise ValueError(f"Clés obligatoires manquantes dans la config: {', '.join(missing_keys)}")
+
+    # 7. Parsing et conversion des valeurs
     try:
-        with open(filepath, "r") as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith("#"):
-                    continue
-                if "=" not in line:
-                    print(
-                        f"Error: invalid line format: '{line}'",
-                        file=sys.stderr,
-                    )
-                    sys.exit(1)
-                key, val = line.split("=", 1)
-                config[key.strip().upper()] = val.strip()
-    except IOError:
-        print("Error: cannot read config file", file=sys.stderr)
-        sys.exit(1)
-
-    # Validation des clés obligatoires
-    mandatory_keys = [
-        "WIDTH",
-        "HEIGHT",
-        "ENTRY",
-        "EXIT",
-        "OUTPUT_FILE",
-        "PERFECT",
-    ]
-    for m_key in mandatory_keys:
-        if m_key not in config:
-            print(f"Error: missing required key: {m_key}", file=sys.stderr)
-            sys.exit(1)
-
-    # Validation des dimensions
-    try:
-        width = int(config["WIDTH"])
-        height = int(config["HEIGHT"])
+        width = int(raw_config["WIDTH"])
+        height = int(raw_config["HEIGHT"])
         if width <= 0 or height <= 0:
-            raise ValueError
+            raise ValueError("WIDTH et HEIGHT doivent être supérieurs à 0")
     except ValueError:
-        print(
-            "Error: WIDTH and HEIGHT must be positive integers greater than 0",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+        raise ValueError("WIDTH et HEIGHT doivent être des entiers valides")
 
-    # Validation des coordonnées d'entrée et de sortie
-    entry = _parse_coords(config["ENTRY"], "ENTRY", width, height)
-    exit_ = _parse_coords(config["EXIT"], "EXIT", width, height)
+    entry = _parse_coords(raw_config["ENTRY"], "ENTRY")
+    exit_ = _parse_coords(raw_config["EXIT"], "EXIT")
 
-    if entry == exit_:
-        print("Error: ENTRY and EXIT must be different", file=sys.stderr)
-        sys.exit(1)
-
-    # Validation du booléen PERFECT
-    perfect_val = config["PERFECT"].lower()
-    if perfect_val in ["true", "1"]:
+    # Validation du type booléen
+    perfect_str = raw_config["PERFECT"].lower()
+    if perfect_str in ("true", "1", "yes"):
         perfect = True
-    elif perfect_val in ["false", "0"]:
+    elif perfect_str in ("false", "0", "no"):
         perfect = False
     else:
-        print("Error: PERFECT must be True or False", file=sys.stderr)
-        sys.exit(1)
+        raise ValueError("PERFECT doit être un booléen (true/false)")
 
-    # Récupération optionnelle du Seed
+    # Gestion de SEED (optionnel)
     seed = None
-    if "SEED" in config:
+    if "SEED" in raw_config:
         try:
-            seed = int(config["SEED"])
+            seed = int(raw_config["SEED"])
         except ValueError:
-            pass
+            raise ValueError("SEED doit être un entier valide")
 
     return {
         "width": width,
         "height": height,
         "entry": entry,
         "exit": exit_,
-        "output_file": config["OUTPUT_FILE"],
         "perfect": perfect,
+        "output_file": raw_config["OUTPUT_FILE"],
         "seed": seed,
     }
