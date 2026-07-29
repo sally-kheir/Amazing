@@ -1,3 +1,0 @@
-The "What worked well / What could be improved / Planning" sections — these should reflect what actually happened in your project, not what I wrote. Edit them to be honest about your experience.
-
-Once that's done, paste it into README.md, save, then we do the docstrings in maze.py.
