@@ -1,7 +1,6 @@
-# generator.py
 from __future__ import annotations
 import random
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 from mazegen.maze import Maze, NORTH, EAST, SOUTH, WEST
 from mazegen.pathfinder import find_path
 from mazegen.pattern import inject_42
@@ -21,7 +20,7 @@ class MazeGenerator:
         self.seed = seed
         self._first_generation = True
         self._maze = Maze(width, height)
-        self.grid = None
+        self.grid: Optional[List[List[int]]] = None
         self.entry: Optional[Tuple[int, int]] = None
         self.exit_: Optional[Tuple[int, int]] = None
         self.solution: Optional[str] = None

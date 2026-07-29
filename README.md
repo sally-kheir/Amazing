@@ -157,11 +157,11 @@ which let us work in parallel without blocking each other.
 - Testing with small mazes (5×5) early caught bugs before they got complex
 
 ### What could be improved
-- We could have committed more frequently from the start
+- Running `flake8` and `mypy` as an ongoing check rather than fixing all linting issues at the end would have saved us time in the final polish.
 - Lint errors should have been fixed as we went, not left to the end
 
 ### Tools used
 - VS Code
-- Claude (claude.ai) for explanations and code review
+- Claude (claude.ai) for explanations and code review / Gemini
 - Python venv for dependency isolation
 - Git for version control

@@ -1,14 +1,14 @@
 # display/ascii_view.py
-from typing import Any, Set, Tuple, Dict, List, Optional, TypedDict
+from typing import Any, Set, Tuple, Dict, List, Optional, TypedDict, Union, cast
 
 
-COLORS = {
+COLORS: Dict[str, Union[str, List[str]]] = {
     "RESET": "\033[0m",
-    
+
     # Entry/Exit default colors (#CCE092)
     "ENTRY": "\033[48;2;204;224;146m",   # #CCE092
     "EXIT": "\033[48;2;204;224;146m",    # #CCE092
-    
+
     # Palette Hex (Theme Custom)
     "PALETTE_WALL": "\033[48;2;186;176;149m",     # #BAB095
     "PALETTE_PATH": "\033[48;2;204;224;146m",     # #CCE092
@@ -26,7 +26,7 @@ COLORS = {
     "PASTEL_BG": "\033[48;2;242;231;189m",        # #F2E7BD
     "PASTEL_PATH": "\033[48;2;189;217;242m",      # #BDD9F2
     "PASTEL_PATTERN": "\033[48;2;242;189;205m",   # #F2BDCD
-    "PASTEL_START_END": "\033[48;2;225;242;189m", # #E1F2BD
+    "PASTEL_START_END": "\033[48;2;189;217;242m", # #E1F2BD
 
     # Palette Hex (Theme Neon Pastel)
     "NEON_WALL": "\033[48;2;184;92;207m",         # #B85CCF (Murs)
@@ -37,25 +37,25 @@ COLORS = {
     "NEON_EXIT": "\033[48;2;175;255;237m",        # #AFFFED (Fin)
 
     # Strawberry theme
-    "STRAWBERRY_WALL": "\033[48;5;218m",   
-    "STRAWBERRY_PATH": "\033[48;5;196m",   
-    "STRAWBERRY_PATTERN": "\033[48;5;196m", 
-    
+    "STRAWBERRY_WALL": "\033[48;5;218m",
+    "STRAWBERRY_PATH": "\033[48;5;196m",
+    "STRAWBERRY_PATTERN": "\033[48;5;196m",
+
     # Lilac theme
-    "LILAC_WALL": "\033[48;5;189m",        
-    "LILAC_PATH": "\033[48;5;54m",         
-    "LILAC_PATTERN": "\033[48;5;54m",      
-    
+    "LILAC_WALL": "\033[48;5;189m",
+    "LILAC_PATH": "\033[48;5;54m",
+    "LILAC_PATTERN": "\033[48;5;54m",
+
     # Rainbow theme
-    "RAINBOW_GREY": "\033[48;5;240m",      
-    "RAINBOW_PATH": "\033[48;5;240m",      
-    "RAINBOW_PATTERN": "\033[48;5;240m",   
-    
+    "RAINBOW_GREY": "\033[48;5;240m",
+    "RAINBOW_PATH": "\033[48;5;240m",
+    "RAINBOW_PATTERN": "\033[48;5;240m",
+
     # 42 Theme
-    "FORTYTWO_WALL": "\033[48;5;240m",     
-    "FORTYTWO_PATH": "\033[48;5;75m",      
-    "FORTYTWO_PATTERN": "\033[48;5;75m",   
-    
+    "FORTYTWO_WALL": "\033[48;5;240m",
+    "FORTYTWO_PATH": "\033[48;5;75m",
+    "FORTYTWO_PATTERN": "\033[48;5;75m",
+
     # Gradient colors for rainbow walls
     "RAINBOW_GRADIENT": [
         "\033[48;5;196m",
@@ -85,30 +85,29 @@ class ThemeStyle(TypedDict):
 
 THEME_STYLES: Dict[str, ThemeStyle] = {
     "CUSTOM": {
-        "wall": COLORS["PALETTE_WALL"],
-        "path": COLORS["PALETTE_PATH"],
-        "pattern": COLORS["PALETTE_PATTERN"],
+        "wall": cast(str, COLORS["PALETTE_WALL"]),
+        "path": cast(str, COLORS["PALETTE_PATH"]),
+        "pattern": cast(str, COLORS["PALETTE_PATTERN"]),
         "pattern_display": "  ",
     },
     "MAGENTA": {
-        "wall": COLORS["MAGENTA_WALL"],
-        "path": COLORS["MAGENTA_PATH"],
-        "pattern": COLORS["MAGENTA_PATTERN"],
+        "wall": cast(str, COLORS["MAGENTA_WALL"]),
+        "path": cast(str, COLORS["MAGENTA_PATH"]),
+        "pattern": cast(str, COLORS["MAGENTA_PATTERN"]),
         "pattern_display": "  ",
     },
     "PASTEL": {
-        "wall": COLORS["PASTEL_WALL"],
-        "path": COLORS["PASTEL_PATH"],
-        "pattern": COLORS["PASTEL_PATTERN"],
+        "wall": cast(str, COLORS["PASTEL_WALL"]),
+        "path": cast(str, COLORS["PASTEL_PATH"]),
+        "pattern": cast(str, COLORS["PASTEL_PATTERN"]),
         "pattern_display": "  ",
     },
     "NEON": {
-        "wall": COLORS["NEON_WALL"],
-        "path": COLORS["NEON_PATH"],
-        "pattern": COLORS["NEON_PATTERN"],
+        "wall": cast(str, COLORS["NEON_WALL"]),
+        "path": cast(str, COLORS["NEON_PATH"]),
+        "pattern": cast(str, COLORS["NEON_PATTERN"]),
         "pattern_display": "  ",
     },
-    
 }
 
 THEME_CYCLE: List[str] = [
@@ -139,7 +138,7 @@ def build_path_cells(maze_gen: Any) -> List[Tuple[int, int]]:
 
 def _get_gradient_color(x: int, y: int, width: int, height: int) -> str:
     """Return a gradient rainbow color based on position."""
-    gradient = COLORS["RAINBOW_GRADIENT"]
+    gradient = cast(List[str], COLORS["RAINBOW_GRADIENT"])
     total = width + height
     index = int(((x + y) / total) * len(gradient))
     index = min(index, len(gradient) - 1)
@@ -155,26 +154,30 @@ def render(
     """Generate a pixel-art block representation of the maze."""
     style = THEME_STYLES.get(theme_name, THEME_STYLES[DEFAULT_THEME])
 
+    reset_color = cast(str, COLORS["RESET"])
+    entry_def_color = cast(str, COLORS["ENTRY"])
+    exit_def_color = cast(str, COLORS["EXIT"])
+
     if theme_name == "CUSTOM":
-        bg_empty = COLORS["PALETTE_BG"] + "  "
-        entry_color = COLORS["ENTRY"] + "  "
-        exit_color = COLORS["EXIT"] + "  "
+        bg_empty = cast(str, COLORS["PALETTE_BG"]) + "  "
+        entry_color = entry_def_color + "  "
+        exit_color = exit_def_color + "  "
     elif theme_name == "MAGENTA":
-        bg_empty = COLORS["MAGENTA_BG"] + "  "
-        entry_color = COLORS["ENTRY"] + "  "
-        exit_color = COLORS["EXIT"] + "  "
+        bg_empty = cast(str, COLORS["MAGENTA_BG"]) + "  "
+        entry_color = entry_def_color + "  "
+        exit_color = exit_def_color + "  "
     elif theme_name == "PASTEL":
-        bg_empty = COLORS["PASTEL_BG"] + "  "
-        entry_color = COLORS["PASTEL_START_END"] + "  "
-        exit_color = COLORS["PASTEL_START_END"] + "  "
+        bg_empty = cast(str, COLORS["PASTEL_BG"]) + "  "
+        entry_color = cast(str, COLORS["PASTEL_START_END"]) + "  "
+        exit_color = cast(str, COLORS["PASTEL_START_END"]) + "  "
     elif theme_name == "NEON":
-        bg_empty = COLORS["NEON_BG"] + "  "
-        entry_color = COLORS["NEON_START"] + "  "
-        exit_color = COLORS["NEON_EXIT"] + "  "
+        bg_empty = cast(str, COLORS["NEON_BG"]) + "  "
+        entry_color = cast(str, COLORS["NEON_START"]) + "  "
+        exit_color = cast(str, COLORS["NEON_EXIT"]) + "  "
     else:
-        bg_empty = COLORS["RESET"] + "  "
-        entry_color = COLORS["ENTRY"] + "  "
-        exit_color = COLORS["EXIT"] + "  "
+        bg_empty = reset_color + "  "
+        entry_color = entry_def_color + "  "
+        exit_color = exit_def_color + "  "
 
     path_cells: Set[Tuple[int, int]] = set()
     if show_path and hasattr(maze_gen, 'solution') and maze_gen.solution:
@@ -223,9 +226,11 @@ def render(
             if not (cell_mask & 2) and (x + 1 < maze_gen.width):
                 east_pos = (x + 1, y)
                 is_east_pattern = east_pos in pattern_cells
-                
+
                 if is_pattern and is_east_pattern:
-                    display_grid[ry][rx + 1] = style["pattern"] + style["pattern_display"]
+                    display_grid[ry][rx + 1] = (
+                        style["pattern"] + style["pattern_display"]
+                    )
                 elif (
                     show_path
                     and pos in path_cells
@@ -238,9 +243,11 @@ def render(
             if not (cell_mask & 4) and (y + 1 < maze_gen.height):
                 south_pos = (x, y + 1)
                 is_south_pattern = south_pos in pattern_cells
-                
+
                 if is_pattern and is_south_pattern:
-                    display_grid[ry + 1][rx] = style["pattern"] + style["pattern_display"]
+                    display_grid[ry + 1][rx] = (
+                        style["pattern"] + style["pattern_display"]
+                    )
                 elif (
                     show_path
                     and pos in path_cells
@@ -263,6 +270,6 @@ def render(
 
     final_lines = []
     for row in display_grid:
-        final_lines.append("".join(row) + COLORS["RESET"])
+        final_lines.append("".join(row) + reset_color)
 
     return "\n".join(final_lines)

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from collections import deque
-from typing import Tuple
+from typing import Deque, Dict, Optional, Tuple
 from mazegen.maze import Maze
 
 
@@ -10,9 +10,8 @@ def find_path(
     if entry == exit_:
         return ""
 
-    came_from: dict = {entry: None}
-    queue = deque()
-    queue.append(entry)
+    came_from: Dict[Tuple[int, int], Optional[Tuple[int, int]]] = {entry: None}
+    queue: Deque[Tuple[int, int]] = deque([entry])
 
     while queue:
         x, y = queue.popleft()
@@ -34,6 +33,8 @@ def find_path(
 
     while current != entry:
         prev = came_from[current]
+        if prev is None:
+            break
         dx = current[0] - prev[0]
         dy = current[1] - prev[1]
         if dx == 1:
