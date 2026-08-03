@@ -1,9 +1,9 @@
 # Default Configuration File
-WIDTH=15
-HEIGHT=15 
+HEIGHT=10
+width=10
 ENTRY=0,0
-EXIT=9,0
-PERFECT=true
-OUTPUT_FILE=output.hex
-SEED=42 
+EXIT=9,9
+PERFECT=false
+OUTPUT_FILE=output.py
+SEED=2
 

@@ -21,7 +21,9 @@ SEED=42
 def ensure_config_exists(config_path: str) -> None:
     """Si le fichier de config n'existe pas, on le recrée automatiquement."""
     if not os.path.exists(config_path):
-        print(f"⚠️  '{config_path}' introuvable. Reconstitution automatique du fichier...")
+        print(
+            f"⚠️  '{config_path}' introuvable."
+            "Reconstitution automatique du fichier...")
         with open(config_path, "w") as f:
             f.write(DEFAULT_CONFIG_CONTENT)
         print(f"✅ Nouveau fichier '{config_path}' créé avec succès !\n")

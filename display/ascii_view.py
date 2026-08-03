@@ -1,5 +1,6 @@
 # display/ascii_view.py
-from typing import Any, Set, Tuple, Dict, List, Optional, TypedDict, Union, cast
+from typing import Any, Set, Tuple, Dict, List
+from typing import Optional, TypedDict, Union, cast
 
 
 COLORS: Dict[str, Union[str, List[str]]] = {
@@ -26,7 +27,7 @@ COLORS: Dict[str, Union[str, List[str]]] = {
     "PASTEL_BG": "\033[48;2;242;231;189m",        # #F2E7BD
     "PASTEL_PATH": "\033[48;2;189;217;242m",      # #BDD9F2
     "PASTEL_PATTERN": "\033[48;2;242;189;205m",   # #F2BDCD
-    "PASTEL_START_END": "\033[48;2;189;217;242m", # #E1F2BD
+    "PASTEL_START_END": "\033[48;2;189;217;242m",  # E1F2BD
 
     # Palette Hex (Theme Neon Pastel)
     "NEON_WALL": "\033[48;2;184;92;207m",         # #B85CCF (Murs)

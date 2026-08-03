@@ -25,7 +25,6 @@ def write_output(maze_gen: Any, filepath: str) -> None:
             f.write(f"{maze_gen.entry[0]},{maze_gen.entry[1]}\n")
             f.write(f"{maze_gen.exit_[0]},{maze_gen.exit_[1]}\n")
 
-            # <--- CORRIGÉ : Transforme la liste ['N', 'E'] en chaîne propre "NE"
             solution_str = "".join(
                 maze_gen.solution) if maze_gen.solution else ""
             f.write(f"{solution_str}\n")

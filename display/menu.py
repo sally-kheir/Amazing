@@ -15,7 +15,6 @@ def clear_screen() -> None:
 
 
 def animate_path_reveal(generator: Any, theme_name: str) -> None:
-    """Affiche le chemin case par case, doucement, au lieu de tout d'un coup."""
     ordered_path = ascii_view.build_path_cells(generator)
     if not ordered_path:
         clear_screen()
@@ -55,21 +54,21 @@ def get_theme_preview(theme_name: str) -> str:
 
 
 def select_theme_sub_menu() -> int:
-    """Affiche un sous-menu avec des lettres (a, b, c...) et un aperçu des couleurs."""
     print("\n --- Select Color Theme ---")
-    
+
     letters = [chr(ord('a') + i) for i in range(len(ascii_view.THEME_CYCLE))]
     theme_mapping = {}
 
     for idx, theme in enumerate(ascii_view.THEME_CYCLE):
         letter = letters[idx]
         theme_mapping[letter] = idx
-        
+
         preview = get_theme_preview(theme)
         print(f"  {letter}. {preview} {theme}")
 
     print("----------------------------")
-    sub_choice = input(f"Choose a theme ({letters[0]}-{letters[-1]}): ").strip().lower()
+    sub_choice = input(
+        f"Choose a theme ({letters[0]}-{letters[-1]}): ").strip().lower()
 
     if sub_choice in theme_mapping:
         return theme_mapping[sub_choice]

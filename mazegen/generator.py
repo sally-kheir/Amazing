@@ -103,7 +103,8 @@ class MazeGenerator:
         # 3. Recursive backtracker
         stack = [entry]
         visited = {entry}
-        total_cells = (self.width * self.height) - len(self._maze.pattern_cells)
+        total_cells = (self.width * self.height) - \
+            len(self._maze.pattern_cells)
 
         while stack and len(visited) < total_cells:
             x, y = stack[-1]
