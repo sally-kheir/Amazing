@@ -122,7 +122,6 @@ python3 -m build
 
 ## Resources
 
-- [Maze generation algorithms — Wikipedia](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
 - [Recursive backtracker explanation — Jamis Buck](https://weblog.jamisbuck.org/2010/12/27/maze-generation-depth-first-search)
 - [Python typing module](https://docs.python.org/3/library/typing.html)
 - [BFS explanation](https://en.wikipedia.org/wiki/Breadth-first_search)
@@ -140,7 +139,7 @@ integrated by the team. No code was blindly copied without understanding it.
 
 - **dael-ter** — Maze engine: data model, generation algorithm, pathfinder,
   42 pattern, reusable package and pip packaging
-- **[teammate login]** — Interface: config parser, output writer, ASCII
+- **skheir**  Interface: config parser, output writer, ASCII
   display, interactive menu, main entry point, Makefile
 
 ### Planning
@@ -162,6 +161,5 @@ which let us work in parallel without blocking each other.
 
 ### Tools used
 - VS Code
-- Claude (claude.ai) for explanations and code review / Gemini
-- Python venv for dependency isolation
+- Claude (claude.ai) for explanations and code review
 - Git for version control

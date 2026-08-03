@@ -4,6 +4,6 @@ width=10
 ENTRY=0,0
 EXIT=9,9
 PERFECT=false
-OUTPUT_FILE=output.py
+OUTPUT_FILE=output.txt
 SEED=2
 
