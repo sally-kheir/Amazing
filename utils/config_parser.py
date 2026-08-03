@@ -1,9 +1,7 @@
-# utils/config_parser.py
 import os
 import sys
 from typing import Any, Dict, Tuple
 
-# Minimum maze dimensions allowed (below this, generation is unreliable)
 MIN_WIDTH = 8
 MIN_HEIGHT = 8
 
@@ -11,7 +9,7 @@ MIN_HEIGHT = 8
 def _parse_coords(
     coord_str: str, key_name: str, width: int, height: int
 ) -> Tuple[int, int]:
-    """Parse et valide des coordonnées au format 'x,y'."""
+    """Parse and validate coordinates in 'x,y' format."""
     try:
         parts = coord_str.split(",")
         if len(parts) != 2:
@@ -35,13 +33,13 @@ def _parse_coords(
 
 
 def parse_config(filepath: str) -> Dict[str, Any]:
-    """Lit et valide le fichier de configuration du labyrinthe.
+    """Reads and validates the maze configuration file.
 
     Args:
-        filepath: Le chemin vers le fichier de configuration.
+        filepath: The path to the configuration file.
 
     Returns:
-        Un dictionnaire contenant les paramètres validés.
+        A dictionary containing the validated parameters.
     """
     if not os.path.exists(filepath):
         print(f"Error: config file '{filepath}' not found", file=sys.stderr)
@@ -66,7 +64,6 @@ def parse_config(filepath: str) -> Dict[str, Any]:
         print("Error: cannot read config file", file=sys.stderr)
         sys.exit(1)
 
-    # Validation des clés obligatoires
     mandatory_keys = [
         "WIDTH",
         "HEIGHT",
@@ -80,7 +77,6 @@ def parse_config(filepath: str) -> Dict[str, Any]:
             print(f"Error: missing required key: {m_key}", file=sys.stderr)
             sys.exit(1)
 
-    # Validation des dimensions
     try:
         width = int(config["WIDTH"])
         height = int(config["HEIGHT"])
@@ -101,7 +97,6 @@ def parse_config(filepath: str) -> Dict[str, Any]:
         )
         sys.exit(1)
 
-    # Validation des coordonnées d'entrée et de sortie
     entry = _parse_coords(config["ENTRY"], "ENTRY", width, height)
     exit_ = _parse_coords(config["EXIT"], "EXIT", width, height)
 
@@ -109,7 +104,6 @@ def parse_config(filepath: str) -> Dict[str, Any]:
         print("Error: ENTRY and EXIT must be different", file=sys.stderr)
         sys.exit(1)
 
-    # Validation du booléen PERFECT
     perfect_val = config["PERFECT"].lower()
     if perfect_val in ["true", "1"]:
         perfect = True
@@ -119,7 +113,6 @@ def parse_config(filepath: str) -> Dict[str, Any]:
         print("Error: PERFECT must be True or False", file=sys.stderr)
         sys.exit(1)
 
-    # Récupération optionnelle du Seed
     seed = None
     if "SEED" in config:
         try:

@@ -1,4 +1,3 @@
-# display/ascii_view.py
 from typing import Any, Set, Tuple, Dict, List
 from typing import Optional, TypedDict, Union, cast
 
@@ -6,72 +5,31 @@ from typing import Optional, TypedDict, Union, cast
 COLORS: Dict[str, Union[str, List[str]]] = {
     "RESET": "\033[0m",
 
-    # Entry/Exit default colors (#CCE092)
-    "ENTRY": "\033[48;2;204;224;146m",   # #CCE092
-    "EXIT": "\033[48;2;204;224;146m",    # #CCE092
+    "ENTRY": "\033[48;2;204;224;146m",
+    "EXIT": "\033[48;2;204;224;146m",
 
-    # Palette Hex (Theme Custom)
-    "PALETTE_WALL": "\033[48;2;186;176;149m",     # #BAB095
-    "PALETTE_PATH": "\033[48;2;204;224;146m",     # #CCE092
-    "PALETTE_BG": "\033[48;2;237;232;208m",       # #EDE8D0
-    "PALETTE_PATTERN": "\033[48;2;214;211;154m",  # #D6D39A
+    "PALETTE_WALL": "\033[48;2;186;176;149m",
+    "PALETTE_PATH": "\033[48;2;204;224;146m",
+    "PALETTE_BG": "\033[48;2;237;232;208m",
+    "PALETTE_PATTERN": "\033[48;2;214;211;154m",
 
-    # Palette Hex (Theme Magenta)
-    "MAGENTA_WALL": "\033[48;2;103;0;103m",       # #670067
-    "MAGENTA_BG": "\033[48;2;255;173;255m",       # #FFADFF
-    "MAGENTA_PATH": "\033[48;2;167;69;214m",     # #A745D6
-    "MAGENTA_PATTERN": "\033[48;2;193;28;132m",   # #C11C84
+    "MAGENTA_WALL": "\033[48;2;103;0;103m",
+    "MAGENTA_BG": "\033[48;2;255;173;255m",
+    "MAGENTA_PATH": "\033[48;2;167;69;214m",
+    "MAGENTA_PATTERN": "\033[48;2;193;28;132m",
 
-    # Palette Hex (Theme Pastel)
-    "PASTEL_WALL": "\033[48;2;216;164;181m",      # #D8A4B5
-    "PASTEL_BG": "\033[48;2;242;231;189m",        # #F2E7BD
-    "PASTEL_PATH": "\033[48;2;189;217;242m",      # #BDD9F2
-    "PASTEL_PATTERN": "\033[48;2;242;189;205m",   # #F2BDCD
-    "PASTEL_START_END": "\033[48;2;189;217;242m",  # E1F2BD
+    "PASTEL_WALL": "\033[48;2;216;164;181m",
+    "PASTEL_BG": "\033[48;2;242;231;189m",
+    "PASTEL_PATH": "\033[48;2;189;217;242m",
+    "PASTEL_PATTERN": "\033[48;2;242;189;205m",
+    "PASTEL_START_END": "\033[48;2;189;217;242m",
 
-    # Palette Hex (Theme Neon Pastel)
-    "NEON_WALL": "\033[48;2;184;92;207m",         # #B85CCF (Murs)
-    "NEON_BG": "\033[48;2;255;179;243m",          # #FFB3F3 (Fond)
-    "NEON_PATH": "\033[48;2;115;255;223m",        # #73FFDF (Chemin)
-    "NEON_PATTERN": "\033[48;2;223;115;255m",     # #DF73FF (Motif 42)
-    "NEON_START": "\033[48;2;255;115;215m",       # #FF73D7 (Début)
-    "NEON_EXIT": "\033[48;2;175;255;237m",        # #AFFFED (Fin)
-
-    # Strawberry theme
-    "STRAWBERRY_WALL": "\033[48;5;218m",
-    "STRAWBERRY_PATH": "\033[48;5;196m",
-    "STRAWBERRY_PATTERN": "\033[48;5;196m",
-
-    # Lilac theme
-    "LILAC_WALL": "\033[48;5;189m",
-    "LILAC_PATH": "\033[48;5;54m",
-    "LILAC_PATTERN": "\033[48;5;54m",
-
-    # Rainbow theme
-    "RAINBOW_GREY": "\033[48;5;240m",
-    "RAINBOW_PATH": "\033[48;5;240m",
-    "RAINBOW_PATTERN": "\033[48;5;240m",
-
-    # 42 Theme
-    "FORTYTWO_WALL": "\033[48;5;240m",
-    "FORTYTWO_PATH": "\033[48;5;75m",
-    "FORTYTWO_PATTERN": "\033[48;5;75m",
-
-    # Gradient colors for rainbow walls
-    "RAINBOW_GRADIENT": [
-        "\033[48;5;196m",
-        "\033[48;5;202m",
-        "\033[48;5;208m",
-        "\033[48;5;214m",
-        "\033[48;5;226m",
-        "\033[48;5;118m",
-        "\033[48;5;46m",
-        "\033[48;5;51m",
-        "\033[48;5;21m",
-        "\033[48;5;57m",
-        "\033[48;5;93m",
-        "\033[48;5;165m",
-    ],
+    "NEON_WALL": "\033[48;2;184;92;207m",
+    "NEON_BG": "\033[48;2;255;179;243m",
+    "NEON_PATH": "\033[48;2;115;255;223m",
+    "NEON_PATTERN": "\033[48;2;223;115;255m",
+    "NEON_START": "\033[48;2;255;115;215m",
+    "NEON_EXIT": "\033[48;2;175;255;237m",
 }
 
 

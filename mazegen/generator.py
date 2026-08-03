@@ -56,16 +56,13 @@ class MazeGenerator:
                  perfect: bool = True) -> None:
         """Generate a maze using recursive backtracker."""
 
-        # 1. Set random seed for reproducibility
         if self.seed is not None and self._first_generation:
             random.seed(self.seed)
             self._first_generation = False
 
-        # 2. Reset maze and inject 42 pattern
         self._maze = Maze(self.width, self.height)
         inject_42(self._maze)
 
-        # --- VÉRIFICATION MOTIF 42 ---
         if entry in self._maze.pattern_cells:
             raise ValueError(
                 f"ENTRY {entry} is inside the 42 pattern cells!"
@@ -75,11 +72,9 @@ class MazeGenerator:
                 f"EXIT {exit_} is inside the 42 pattern cells!"
             )
 
-        # Store entry/exit
         self.entry = entry
         self.exit_ = exit_
 
-        # Open border walls at entry and exit
         ex, ey = entry
         if ex == 0:
             self._maze.grid[ey][ex] &= ~WEST
@@ -100,7 +95,6 @@ class MazeGenerator:
         elif xy == self.height - 1:
             self._maze.grid[xy][xx] &= ~SOUTH
 
-        # 3. Recursive backtracker
         stack = [entry]
         visited = {entry}
         total_cells = (self.width * self.height) - \
@@ -122,17 +116,13 @@ class MazeGenerator:
             else:
                 stack.pop()
 
-        # 4. If not perfect, add loops
         if not perfect:
             self._add_loops()
 
         self._fix_open_areas()
-
-        # 5. Store results & verify solution path exists
         self.grid = self._maze.grid
         self.solution = find_path(self._maze, entry, exit_)
 
-        # --- VÉRIFICATION CHEMIN ACCESSIBLE ---
         if not self.solution:
             raise ValueError(
                 f"No valid path exists between {entry} and {exit_}. "

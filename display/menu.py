@@ -1,16 +1,14 @@
-# display/menu.py
 import os
 import time
 from typing import Any, Dict
 
 from display import ascii_view
 
-# Delai (en secondes) entre chaque case reveleee de l'animation du chemin
 PATH_ANIMATION_DELAY = 0.05
 
 
 def clear_screen() -> None:
-    """Efface le terminal (compatible Windows et Unix)."""
+    """Clear the terminal screen (compatible with Windows and Unix)."""
     os.system("cls" if os.name == "nt" else "clear")
 
 
@@ -38,7 +36,7 @@ def animate_path_reveal(generator: Any, theme_name: str) -> None:
 
 
 def get_theme_preview(theme_name: str) -> str:
-    """Renvoie un petit aperçu coloré (carré de couleur) pour chaque thème."""
+    """Return a small colored preview (color swatch) for each theme."""
     style = ascii_view.THEME_STYLES.get(theme_name)
     reset = ascii_view.COLORS["RESET"]
 
@@ -79,7 +77,7 @@ def select_theme_sub_menu() -> int:
 
 
 def run_menu(config: Dict[str, Any], generator: Any) -> None:
-    """Lance la boucle interactive d'affichage du labyrinthe."""
+    """Run the interactive maze display loop."""
     show_path = False
     theme_index = 0
 

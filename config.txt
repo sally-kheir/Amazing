@@ -1,6 +1,6 @@
 # Default Configuration File
-HEIGHT=10
-width=10
+HEIGHT=20
+width=20
 ENTRY=0,0
 EXIT=9,9
 PERFECT=false
