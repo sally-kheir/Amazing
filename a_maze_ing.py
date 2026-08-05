@@ -1,31 +1,9 @@
-import os
 import sys
 from utils.config_parser import parse_config
 from utils.output_writer import write_output
 from display.menu import run_menu
 
 from mazegen import MazeGenerator
-
-DEFAULT_CONFIG_CONTENT = """# Default Configuration File
-WIDTH=10
-HEIGHT=10
-ENTRY=0,0
-EXIT=9,0
-PERFECT=true
-OUTPUT_FILE=output.hex
-SEED=42
-"""
-
-
-def ensure_config_exists(config_path: str) -> None:
-    """If the config file doesn't exist, it is automatically recreated."""
-    if not os.path.exists(config_path):
-        print(
-            f" '{config_path}' not found"
-            "Automatically rebuilding the file...")
-        with open(config_path, "w") as f:
-            f.write(DEFAULT_CONFIG_CONTENT)
-        print(f"New file '{config_path}' created successfully!\n")
 
 
 def main() -> None:
@@ -35,8 +13,6 @@ def main() -> None:
         sys.exit(1)
 
     config_filename = sys.argv[1]
-
-    ensure_config_exists(config_filename)
 
     try:
         config = parse_config(config_filename)
@@ -48,7 +24,8 @@ def main() -> None:
         generator = MazeGenerator(
             config["width"],
             config["height"],
-            config["seed"])
+            config["seed"]
+        )
         generator.generate(config["entry"], config["exit"], config["perfect"])
     except Exception as e:
         print(f"Generation Error: {e}", file=sys.stderr)
